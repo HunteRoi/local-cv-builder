@@ -1,0 +1,15 @@
+{
+	"type": "module",
+	"devDependencies": {
+		"@types/node": "^20.12.12",
+		"tsx": "^4.10.3"
+	},
+	"dependencies": {
+		"dotenv": "^17.2.3",
+		"puppeteer": "^21.6.1",
+		"ts-node": "^10.9.2"
+	},
+	"scripts": {
+		"build-cv": "npx tsx ./builder.ts"
+	}
+}

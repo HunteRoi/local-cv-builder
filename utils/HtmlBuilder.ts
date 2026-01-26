@@ -6,6 +6,7 @@ import {
 	Hackathon,
 	Language,
 	LanguageOptions,
+	Project,
 } from '../model';
 import { BASE_HTML_DIR, DRIVING_LICENSE_KEY, TITLE_KEY, WON_KEY } from './Constants';
 import { getDateAsString, getJobDates } from './Dates';
@@ -14,6 +15,7 @@ import {
 	parseEducations,
 	parseExperiences,
 	parseHackathons,
+	parseOpenSourceProjects,
 	parseLanguages,
 	parseProfilePicture,
 	parseSkills,
@@ -25,34 +27,26 @@ function buildExperiences(experiences: Experience[], language: LanguageOptions) 
 
 	for (let [index, experience] of experiences.entries()) {
 		experienceContent += `
-            <div>
-                <div class="whitespace-pre-wrap text-black text-[16px] leading-6">${
-					experience.title
-				}</div>
-                <div class="font-[700] text-[12px] main-color">${experience.place}</div>
-                <div class="flex items-center">
-                    <span class="material-symbols-outlined text-[#65696d] text-[12px] mr-1">
-                        calendar_month
-                    </span>
-                    <span class="text-[9px]">${getJobDates(
-						experience.startDate,
-						experience.endDate,
-						language
-					)}</span>
-                </div>
-                <div class="text-[10px]">
-                    <p>${experience.description !== null ? experience.description + '.' : ''}</p>
-                    ${
-						experience.tasks == null
-							? ''
-							: experience.tasks.map((t) => `<li>${t}</li>`).join('')
-					}
-                </div>
-            </div>
-            ${index != experiences.length - 1 ? '<div class="separator my-1"></div>' : ''}
-            `;
+			<div>
+				<div class="whitespace-pre-wrap text-[var(--primary)] text-[16px] leading-6">${experience.title}</div>
+				<div class="font-[700] text-[12px] text-black">${experience.company.name} (${experience.company.place})</div>
+				${experience.customer ? `<div class="font-[600] text-[11px] text-gray-600">Customer: ${experience.customer.name} (${experience.customer.place})</div>` : ''}
+				<div class="flex items-center">
+					<span class="material-symbols-outlined text-[#65696d] text-[12px] mr-1">calendar_month</span>
+					<span class="text-[9px]">${getJobDates(experience.startDate, experience.endDate, language)}</span>
+				</div>
+				<div class="text-[10px]">
+					${experience.description ? `<p>${experience.description}.</p>` : ''}
+					${experience.tasks && experience.tasks.length > 0 ? `<ul class="list-disc ml-4">${experience.tasks.map((t) => `<li>${t}</li>`).join('')}</ul>` : ''}
+					${experience.technologies && experience.technologies.length > 0 ? `<div class="mt-1"><span class="font-bold">Technologies:</span> ${experience.technologies.join(', ')}</div>` : ''}
+					${experience.tools && experience.tools.length > 0 ? `<div><span class="font-bold">Tools:</span> ${experience.tools.join(', ')}</div>` : ''}
+					${experience.methodologies && experience.methodologies.length > 0 ? `<div><span class="font-bold">Methodologies:</span> ${experience.methodologies.join(', ')}</div>` : ''}
+					${experience.links && experience.links.length > 0 ? `<div class="mt-1"><span class="font-bold text-[var(--primary)]">Links:</span> ${experience.links.map(link => `<a class='underline text-blue-700 hover:text-blue-900' href='${link}'>${link}</a>`).join(', ')}</div>` : ''}
+				</div>
+			</div>
+			${index != experiences.length - 1 ? '<div class="separator my-1"></div>' : ''}
+		`;
 	}
-
 	return experienceContent;
 }
 
@@ -92,14 +86,14 @@ function buildEducations(educations: Education[]) {
 		educationContent += `
 			<div>
 				<div class="whitespace-pre-wrap text-black text-[16px] leading-6">${education.degree}</div>
-				<div class="font-[700] text-[12px] main-color">${education.school}</div>
+				<div class="font-[700] text-[12px] text-black">${education.school}</div>
 				<div class="grid grid-cols-2 self-center">
 					<div class="flex items-center">
 						<span class="material-symbols-outlined text-[#65696d] text-[16px] mr-1">
 							calendar_month
 						</span>
 						<span class="text-[9px]">${education.year}</span>
-					</div> 
+					</div>
 					<div class="flex items-center">
 						<span class="material-symbols-outlined text-[#65696d] text-[16px] mr-1">
 							location_on
@@ -136,24 +130,44 @@ function buildHackathons(hackathons: Hackathon[], language: LanguageOptions) {
 	for (let [index, hackathon] of hackathons.entries()) {
 		hackathonContent += `
 			<div>
-				<div class="whitespace-pre-wrap text-black text-[16px] leading-6">${hackathon.project}</div>
-				<div class="font-[700] text-[12px] main-color">${hackathon.place}</div>
+				<div class="whitespace-pre-wrap text-[var(--primary)] text-[16px] leading-6">${hackathon.project}</div>
+				<div class="font-[700] text-[12px] text-black">${hackathon.place}</div>
 				<div class="flex items-center">
-					<span class="material-symbols-outlined text-[#65696d] text-[12px] mr-1">
-						calendar_month
-					</span>
+					<span class="material-symbols-outlined text-[#65696d] text-[12px] mr-1">calendar_month</span>
 					<span class="text-[9px]">${getDateAsString(hackathon.date, language)}</span>
 				</div>
 				<div class="text-[10px]">
-					<p>${hackathon.description}</p>
-					<p>${hackathon.price !== null ? getContent(WON_KEY, language) + ' : ' + hackathon.price : ''}</p>
+					${hackathon.description ? `<p>${hackathon.description}</p>` : ''}
+					${hackathon.price ? `<p>${getContent(WON_KEY, language)}: ${hackathon.price}</p>` : ''}
+					${hackathon.links && hackathon.links.length > 0 ? `<div class="mt-1"><span class="font-bold">Links:</span> ${hackathon.links.map(link => `<a class='underline text-blue-700 hover:text-blue-900' href='${link}'>${link}</a>`).join(', ')}</div>` : ''}
 				</div>
 			</div>
 			${index != hackathons.length - 1 ? '<div class="separator my-1"></div>' : ''}
-			`;
+		`;
 	}
-
 	return hackathonContent;
+}
+
+function buildOpenSourceProjects(projects: Project[], language: LanguageOptions) {
+	let projectContent = '';
+
+	for (let [index, project] of projects.entries()) {
+		projectContent += `
+			<div>
+				<div class="whitespace-pre-wrap text-[var(--primary)] text-[16px] leading-6">${project.project}</div>
+				<div class="flex items-center">
+					<span class="material-symbols-outlined text-[#65696d] text-[12px] mr-1">calendar_month</span>
+					<span class="text-[9px]">${getDateAsString(project.date, language)}</span>
+				</div>
+				<div class="text-[10px]">
+					${project.description ? `<p>${project.description}</p>` : ''}
+					${project.links && project.links.length > 0 ? `<div class="mt-1"><span class="font-bold">Links:</span> ${project.links.map(link => `<a class='underline text-blue-700 hover:text-blue-900' href='${link}'>${link}</a>`).join(', ')}</div>` : ''}
+				</div>
+			</div>
+			${index != projects.length - 1 ? '<div class="separator my-1"></div>' : ''}
+		`;
+	}
+	return projectContent;
 }
 
 export function buildHtml(language: LanguageOptions) {
@@ -178,6 +192,11 @@ export function buildHtml(language: LanguageOptions) {
 	baseHtml = baseHtml.replace(
 		'{{Hackathons}}',
 		buildHackathons(parseHackathons(language), language)
+	);
+
+	baseHtml = baseHtml.replace(
+		'{{OpenSourceProjects}}',
+		buildOpenSourceProjects(parseOpenSourceProjects(language), language)
 	);
 
 	baseHtml = baseHtml.replace('{{Title}}', getContent(TITLE_KEY, language));

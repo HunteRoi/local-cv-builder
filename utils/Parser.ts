@@ -6,12 +6,14 @@ import {
 	Hackathon,
 	Language,
 	LanguageOptions,
+	Project,
 } from '../model';
 import {
 	CERTIFICATIONS_DIR,
 	EDUCATIONS_DIR,
 	EXPERIENCES_DIR,
 	HACKATHONS_DIR,
+	OPEN_SOURCE_DIR,
 	LANGUAGES_DIR,
 	PROFILE_PICTURE_DIR,
 	SKILLS_DIR,
@@ -75,6 +77,13 @@ export function parseHackathons(language: LanguageOptions): Hackathon[] {
 	return parseContent<Hackathon[]>(HACKATHONS_DIR, language).map((h) => {
 		h.date = new Date(h.date);
 		return h;
+	});
+}
+
+export function parseOpenSourceProjects(language: LanguageOptions): Project[] {
+	return parseContent<Project[]>(OPEN_SOURCE_DIR, language).map((p) => {
+		p.date = new Date(p.date);
+		return p;
 	});
 }
 

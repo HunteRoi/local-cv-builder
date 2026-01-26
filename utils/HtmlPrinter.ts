@@ -11,6 +11,7 @@ export async function printHtml(language: LanguageOptions) {
 	});
 
 	const fileName = process.env.fileName || 'cv';
+	const htmlPath = `./results/${fileName}_${language}.html`;
 	const pdfPath = `./results/${fileName}_${language}.pdf`;
 	const page = await browser.newPage();
 
@@ -34,5 +35,6 @@ export async function printHtml(language: LanguageOptions) {
 		fs.mkdirSync(resultsDir, { recursive: true });
 	}
 
+	fs.writeFileSync(htmlPath, htmlContent);
 	fs.writeFileSync(pdfPath, pdfFile);
 }

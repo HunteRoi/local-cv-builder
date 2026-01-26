@@ -49,7 +49,7 @@ fileName=cv_yourname
 | ---------- | ----------------------------------------------------------- | ---------------------- |
 | `fileName` | Base name for generated PDF files (without language suffix) | `cv_servais_guillaume` |
 
-The final PDF will be named: `{fileName}_{language}.pdf`  
+The final PDF will be named: `{fileName}_{language}.pdf`
 Example: `cv_servais_guillaume_en.pdf`, `cv_servais_guillaume_fr.pdf`
 
 ## 📁 Content Structure
@@ -58,18 +58,24 @@ All content files are located in the `content/` directory. You need to create/cu
 
 ### 1. Experiences (`content/experiences/`)
 
-Create language-specific files: `en.json`, `fr.json`
+Create language-specific files: `en-US.json`, `fr-BE.json`
 
 ```json
 [
 	{
 		"title": "Software Developer",
-		"place": "Company Name",
+		"company": {
+			"name": "Company Name",
+			"place": "City (Country)"
+		},
 		"startDate": "2024-01-01",
 		"endDate": null,
 		"description": "Brief description of the role",
 		"tasks": ["Task or achievement 1", "Task or achievement 2"],
-		"technologies": [".NET", "React", "SQL"]
+		"technologies": [".NET", "React", "SQL"],
+		"tools": ["VSCode", "Rider", "CodeScene"],
+		"metholodogies": ["Scrum"],
+		"links": []
 	}
 ]
 ```
@@ -83,6 +89,9 @@ Create language-specific files: `en.json`, `fr.json`
 - `description` (string): Role description
 - `tasks` (array|null): List of responsibilities or achievements
 - `technologies` (array): Technologies used (optional, for reference)
+- `tools` (array): Tools used (optional, for reference)
+- `methodologies` (array): Metholodogies used (optional, for reference)
+- `links` (array): Links to external resources (optional, for reference)
 
 ### 2. Skills (`content/skills/content.json`)
 
@@ -94,7 +103,7 @@ Not language-specific (same for all languages):
 
 ### 3. Languages (`content/languages/`)
 
-Create language-specific files: `en.json`, `fr.json`
+Create language-specific files: `en-US.json`, `fr-BE.json`
 
 ```json
 [
@@ -116,7 +125,7 @@ Create language-specific files: `en.json`, `fr.json`
 
 ### 4. Education (`content/educations/`)
 
-Create language-specific files: `en.json`, `fr.json`
+Create language-specific files: `en-US.json`, `fr-BE.json`
 
 ```json
 [
@@ -154,9 +163,32 @@ Not language-specific:
 - `title` (string): Certification name
 - `date` (string): ISO date format (YYYY-MM-DD)
 
-### 6. Hackathons (`content/hackathons/`)
 
-Create language-specific files: `en.json`, `fr.json`
+### 6. Projects (`content/open-source/`)
+
+Create language-specific files: `en-US.json`, `fr-BE.json`
+
+```json
+[
+	{
+		"project": "Open Source Project Title",
+		"description": "Brief project description",
+		"date": "2024-06-01",
+		"links": ["https://github.com/example"]
+	}
+]
+```
+
+**Fields:**
+
+- `project` (string): Project name
+- `description` (string): Project description
+- `date` (string): ISO date format (YYYY-MM-DD)
+- `links` (array): Links to external resources (optional)
+
+### 7. Hackathons (`content/hackathons/`)
+
+Create language-specific files: `en-US.json`, `fr-BE.json`
 
 ```json
 [
@@ -165,7 +197,8 @@ Create language-specific files: `en.json`, `fr.json`
 		"project": "Project Title",
 		"description": "Brief project description",
 		"date": "2024-06-01",
-		"price": "First Place Prize"
+		"price": "First Place Prize",
+		"links": ["https://google.com"]
 	}
 ]
 ```
@@ -177,10 +210,11 @@ Create language-specific files: `en.json`, `fr.json`
 - `description` (string): Project description
 - `date` (string): ISO date format (YYYY-MM-DD)
 - `price` (string|null): Award/prize or `null`
+- `links` (array): Links to external resources (optional)
 
-### 7. Translations (`content/translations/`)
+### 8. Translations (`content/translations/`)
 
-Create language-specific files: `en.json`, `fr.json`
+Create language-specific files: `en-US.json`, `fr-BE.json`
 
 ```json
 {
@@ -200,13 +234,13 @@ Create language-specific files: `en.json`, `fr.json`
 - `title`: Your professional title
 - `won`: Text for prizes/awards
 
-### 8. Profile Picture
+### 9. Profile Picture
 
 Place your profile picture at: `content/profile_picture.jpg`
 
 Recommended: Square image, 500x500px or larger
 
-### 9. HTML Template
+### 10. HTML Template
 
 Edit `content/base.html` to customize the CV layout and styling.
 
@@ -220,7 +254,8 @@ Edit `content/base.html` to customize the CV layout and styling.
 - `{{Skills}}` - Skills section
 - `{{Educations}}` - Education section
 - `{{Certifications}}` - Certifications section
-- `{{Hackathons}}` - Hackathons/Projects section
+- `{{Hackathons}}` - Hackathons section
+- `{{OpenSourceProjects}}` - Open source projects section
 
 ## 🏃 Running the CV Builder
 
@@ -233,39 +268,36 @@ npm run build-cv
 This will:
 
 1. Read all content files
-2. Generate HTML for each language (en, fr)
+2. Generate HTML for each language (en-US, fr-BE)
 3. Convert HTML to PDF using Puppeteer
-4. Save PDFs in the `results/` folder
+4. Save HTML and PDFs in the `results/` folder
 
 ### Output
 
 Generated PDFs will be saved as:
 
-- `results/cv_yourname_en.pdf`
-- `results/cv_yourname_fr.pdf`
+- `results/cv_yourname_en-US.pdf`
+- `results/cv_yourname_fr-BE.pdf`
 
 ## 🌍 Adding More Languages
 
 To add a new language (e.g., Spanish):
 
 1. Add language files in these directories:
-    - `content/experiences/es.json`
-    - `content/educations/es.json`
-    - `content/languages/es.json`
-    - `content/hackathons/es.json`
-    - `content/translations/es.json`
+    - `content/experiences/es-ES.json`
+    - `content/educations/es-ES.json`
+    - `content/languages/es-ES.json`
+    - `content/hackathons/es-ES.json`
+    - `content/translations/es-ES.json`
 
 2. Update `model/LanguageOptions.ts`:
 
 ```typescript
-export type LanguageOptions = 'fr' | 'en' | 'es';
+export const languageOptions = ['fr-BE', 'en-US', 'es-ES'] as const;
+export type LanguageOptions = typeof languageOptions[number];
 ```
 
-3. Update `builder.ts`:
-
-```typescript
-const languages = ['fr' as LanguageOptions, 'en' as LanguageOptions, 'es' as LanguageOptions];
-```
+3. Update `builder.ts` if needed to include the new language in the `languages` array.
 
 ## 📂 Project Structure
 
@@ -276,13 +308,14 @@ builder/
 │   ├── educations/
 │   ├── experiences/
 │   ├── hackathons/
+│   ├── open-source/
 │   ├── languages/
 │   ├── skills/
 │   ├── translations/
 │   ├── base.html        # HTML template
 │   └── profile_picture.jpg
 ├── model/               # TypeScript interfaces
-├── utils/               # Helper functions
+├── utils/               # Helper functions (no LanguageProvider anymore)
 ├── results/             # Generated PDFs (auto-created)
 ├── .env                 # Environment configuration
 ├── builder.ts           # Main entry point
@@ -305,7 +338,7 @@ The project uses `tsx` for TypeScript execution without pre-compilation.
 
 - **Date Formats**: Always use ISO format (YYYY-MM-DD) for dates
 - **Current Position**: Set `endDate` to `null` for ongoing roles
-- **Optional Fields**: Set `tasks`, `price`, or `description` to `null` if not needed
+- **Optional Fields**: Set `tasks`, `price`, `description`, or `links` to `null` if not needed
 - **Sorting**: Experiences are automatically sorted by most recent first
 - **Profile Picture**: Use JPG format for best compatibility
 
@@ -316,7 +349,7 @@ The project uses `tsx` for TypeScript execution without pre-compilation.
 - Make sure all required JSON files exist for your languages
 - Check that file names match exactly (case-sensitive)
 
-### PDF not generating
+### PDF or HTML not generating
 
 - Verify all JSON files have valid syntax
 - Check that dates are in correct ISO format (YYYY-MM-DD)

@@ -1,1 +1,3 @@
-export type LanguageOptions = 'fr' | 'en';
+export const languageOptions = ['fr-BE', 'en-US'] as const;
+
+export type LanguageOptions = typeof languageOptions[number];

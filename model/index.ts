@@ -4,3 +4,4 @@ export * from './Experience';
 export * from './Hackathon';
 export * from './Language';
 export * from './LanguageOptions';
+export * from './Project';

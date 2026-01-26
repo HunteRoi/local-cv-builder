@@ -1,7 +1,6 @@
-export interface Hackathon {
+import { Project } from "./Project";
+
+export interface Hackathon extends Project {
 	place: string;
-	project: string;
-	description: string;
 	price?: string | null;
-	date: Date;
 }

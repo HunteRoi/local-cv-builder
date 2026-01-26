@@ -41,7 +41,7 @@ function buildExperiences(experiences: Experience[], language: LanguageOptions) 
 					${experience.technologies && experience.technologies.length > 0 ? `<div class="mt-1"><span class="font-bold">Technologies:</span> ${experience.technologies.join(', ')}</div>` : ''}
 					${experience.tools && experience.tools.length > 0 ? `<div><span class="font-bold">Tools:</span> ${experience.tools.join(', ')}</div>` : ''}
 					${experience.methodologies && experience.methodologies.length > 0 ? `<div><span class="font-bold">Methodologies:</span> ${experience.methodologies.join(', ')}</div>` : ''}
-					${experience.links && experience.links.length > 0 ? `<div class="mt-1"><span class="font-bold text-[var(--primary)]">Links:</span> ${experience.links.map(link => `<a class='underline text-blue-700 hover:text-blue-900' href='${link}'>${link}</a>`).join(', ')}</div>` : ''}
+					${experience.links && experience.links.length > 0 ? `<div><span class="font-bold">Links:</span> ${experience.links.map(link => `<a class='underline text-blue-700 hover:text-blue-900' href='${link}'>${link}</a>`).join(', ')}</div>` : ''}
 				</div>
 			</div>
 			${index != experiences.length - 1 ? '<div class="separator my-1"></div>' : ''}

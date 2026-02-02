@@ -7,7 +7,7 @@ export async function printHtml(language: LanguageOptions, options: BuildOptions
 	const htmlContent: string = buildHtml(language, options);
 
 	const browser = await pupeteer.launch({
-		headless: 'new',
+		headless: true
 	});
 
 	const fileName = process.env.fileName || 'cv';

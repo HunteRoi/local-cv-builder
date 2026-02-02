@@ -21,6 +21,7 @@ import {
 	parseLanguages,
 	parseProfile,
 	parseProfilePicture,
+	parseProfileSummary,
 	parseSkills,
 } from './Parser';
 import { getContent } from './Translation';
@@ -204,6 +205,7 @@ function buildSection(title: string, id: string, content: string, additionalClas
 export function buildHtml(language: LanguageOptions, options: BuildOptions) {
 	let baseHtml: string = fs.readFileSync(BASE_HTML_DIR).toString();
 	const profile: Profile = parseProfile();
+	const profileSummary = parseProfileSummary(language);
 
 	// Profile information
 	baseHtml = baseHtml.replace('{{FullName}}', `${profile.firstName} ${profile.lastName}`);
@@ -211,7 +213,7 @@ export function buildHtml(language: LanguageOptions, options: BuildOptions) {
 	baseHtml = baseHtml.replace('{{Phone}}', profile.phone);
 	baseHtml = baseHtml.replace('{{City}}', profile.city);
 	baseHtml = baseHtml.replace('{{DriverLicenseSection}}', buildDriverLicenseSection(profile.hasDriverLicense, language));
-	baseHtml = baseHtml.replace('{{Summary}}', buildSummary(profile.summary));
+	baseHtml = baseHtml.replace('{{Summary}}', buildSummary(profileSummary.summary));
 	baseHtml = baseHtml.replace('{{Title}}', getContent(TITLE_KEY, language));
 	baseHtml = baseHtml.replace('{{ProfilePicture}}', parseProfilePicture());
 

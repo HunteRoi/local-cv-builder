@@ -7,6 +7,7 @@ import {
 	Language,
 	LanguageOptions,
 	Profile,
+	ProfileSummary,
 	Project,
 } from '../model';
 import {
@@ -91,6 +92,10 @@ export function parseOpenSourceProjects(language: LanguageOptions): Project[] {
 
 export function parseProfile(): Profile {
 	return parseContent<Profile>(PROFILE_DIR, null, false);
+}
+
+export function parseProfileSummary(language: LanguageOptions): ProfileSummary {
+	return parseContent<ProfileSummary>(PROFILE_DIR, language);
 }
 
 export function parseProfilePicture(): string {

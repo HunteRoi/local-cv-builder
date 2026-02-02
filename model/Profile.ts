@@ -6,5 +6,8 @@ export interface Profile {
     city: string;
     hasDriverLicense: boolean;
     picture: string;
+}
+
+export interface ProfileSummary {
     summary: string[];
 }

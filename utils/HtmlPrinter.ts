@@ -10,9 +10,10 @@ export async function printHtml(language: LanguageOptions, options: BuildOptions
 		headless: true
 	});
 
+	const time = new Date().getTime();
 	const fileName = process.env.fileName || 'cv';
-	const htmlPath = `./results/${fileName}_${language}.html`;
-	const pdfPath = `./results/${fileName}_${language}.pdf`;
+	const htmlPath = `./results/${fileName}_${language}_${time}.html`;
+	const pdfPath = `./results/${fileName}_${language}_${time}.pdf`;
 	const page = await browser.newPage();
 
 	await page.setContent(htmlContent);

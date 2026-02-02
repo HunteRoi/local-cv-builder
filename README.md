@@ -52,7 +52,7 @@ fileName=cv_yourname
 | `fileName` | Base name for generated PDF files (without language suffix) | `cv_servais_guillaume` |
 
 The final PDF will be named: `{fileName}_{language}.pdf`
-Example: `cv_servais_guillaume_en.pdf`, `cv_servais_guillaume_fr.pdf`
+Example: `cv_servais_guillaume_en-US.pdf`, `cv_servais_guillaume_fr-BE.pdf`
 
 ## 📁 Content Structure
 
@@ -248,12 +248,7 @@ Not language-specific. Contains your personal information:
     "phone": "+1 (555) 123-4567",
     "city": "New York",
     "hasDriverLicense": true,
-    "picture": "profile_picture.jpg",
-    "summary": [
-        "First paragraph of your professional summary.",
-        "Second paragraph with more details about your experience.",
-        "Third paragraph about your skills and interests."
-    ]
+    "picture": "profile_picture.jpg"
 }
 ```
 
@@ -266,15 +261,31 @@ Not language-specific. Contains your personal information:
 - `city` (string): Your city/location
 - `hasDriverLicense` (boolean): Whether to display driving license
 - `picture` (string): Filename of your profile picture (in `content/` folder)
+
+### 10. Summary (`content/profile/`)
+
+Create language-specific files: `en-US.json`, `fr-BE.json` for the professional summary.
+
+```json
+{
+    "summary": [
+        "First paragraph of your professional summary.",
+        "Second paragraph with more details about your experience.",
+        "Third paragraph about your skills and interests."
+    ]
+}
+```
+
+**Fields:**
 - `summary` (array): Array of paragraphs for your professional summary
 
-### 10. Profile Picture
+### 11. Profile Picture
 
 Place your profile picture at: `content/profile_picture.jpg`
 
 Recommended: Square image, 500x500px or larger
 
-### 11. HTML Template
+### 12. HTML Template
 
 Edit `content/base.html` to customize the CV layout and styling.
 
@@ -307,7 +318,7 @@ npm run build-cv -- en-US
 ### Command Line Options
 
 ```bash
-npx ts-node builder.ts [languages...] [options...]
+npx tsx ./builder.ts [languages...] [options...]
 ```
 
 **Languages:**
@@ -317,17 +328,11 @@ npx ts-node builder.ts [languages...] [options...]
 
 | Option | Description |
 |--------|-------------|
-| `--hackathons` | Include hackathons section (default) |
 | `--no-hackathons` | Exclude hackathons section |
-| `--open-source` | Include open-source projects section (default) |
 | `--no-open-source` | Exclude open-source projects section |
-| `--certifications` | Include certifications section (default) |
 | `--no-certifications` | Exclude certifications section |
-| `--education` | Include education section (default) |
 | `--no-education` | Exclude education section |
-| `--skills` | Include skills section (default) |
 | `--no-skills` | Exclude skills section |
-| `--languages` | Include languages section (default) |
 | `--no-languages` | Exclude languages section |
 | `--help` | Show help message |
 
@@ -335,16 +340,16 @@ npx ts-node builder.ts [languages...] [options...]
 
 ```bash
 # Generate English CV with all sections
-npx ts-node builder.ts en-US
+npx tsx ./builder.ts en-US
 
 # Generate multiple languages
-npx ts-node builder.ts en-US fr-FR
+npx tsx ./builder.ts en-US fr-FR
 
 # Exclude hackathons and open-source sections
-npx ts-node builder.ts en-US --no-hackathons --no-open-source
+npx tsx ./builder.ts en-US --no-hackathons --no-open-source
 
 # Generate minimal CV (experiences only)
-npx ts-node builder.ts en-US --no-hackathons --no-open-source --no-certifications --no-education --no-skills --no-languages
+npx tsx ./builder.ts en-US --no-hackathons --no-open-source --no-certifications --no-education --no-skills --no-languages
 ```
 
 ### Empty Section Handling

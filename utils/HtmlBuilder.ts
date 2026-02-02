@@ -1,11 +1,13 @@
 import * as fs from 'fs';
 import {
+	BuildOptions,
 	Certification,
 	Education,
 	Experience,
 	Hackathon,
 	Language,
 	LanguageOptions,
+	Profile,
 	Project,
 } from '../model';
 import { BASE_HTML_DIR, DRIVING_LICENSE_KEY, TITLE_KEY, WON_KEY } from './Constants';
@@ -17,6 +19,7 @@ import {
 	parseHackathons,
 	parseOpenSourceProjects,
 	parseLanguages,
+	parseProfile,
 	parseProfilePicture,
 	parseSkills,
 } from './Parser';
@@ -170,40 +173,102 @@ function buildOpenSourceProjects(projects: Project[], language: LanguageOptions)
 	return projectContent;
 }
 
-export function buildHtml(language: LanguageOptions) {
-	let baseHtml: string = fs.readFileSync(BASE_HTML_DIR).toString();
+function buildSummary(summary: string[]) {
+	return summary
+		.map(paragraph => `<p class="mb-3 leading-relaxed text-[13.5px] text-[var(--text)]">${paragraph}</p>`)
+		.join('\n');
+}
 
+function buildDriverLicenseSection(hasDriverLicense: boolean, language: LanguageOptions) {
+	if (!hasDriverLicense) return '';
+	return `
+		<div class="flex items-center col-span-2">
+			<span class="material-symbols-outlined main-color text-[12px] mr-1">
+				id_card
+			</span>
+			<span id="drivingLicense" class="text-[10px] font-[700]">${getContent(DRIVING_LICENSE_KEY, language)}</span>
+		</div>
+	`;
+}
+
+function buildSection(title: string, id: string, content: string, additionalClasses: string = '') {
+	if (!content || content.trim() === '') return '';
+	return `
+		<div class="mb-6${additionalClasses ? ' ' + additionalClasses : ''}">
+			<div${id === 'language' ? ' id="language_title"' : ''} class="section mb-2">${title}</div>
+			<div id="${id}">${content}</div>
+		</div>
+	`;
+}
+
+export function buildHtml(language: LanguageOptions, options: BuildOptions) {
+	let baseHtml: string = fs.readFileSync(BASE_HTML_DIR).toString();
+	const profile: Profile = parseProfile();
+
+	// Profile information
+	baseHtml = baseHtml.replace('{{FullName}}', `${profile.firstName} ${profile.lastName}`);
+	baseHtml = baseHtml.replace('{{Email}}', profile.email);
+	baseHtml = baseHtml.replace('{{Phone}}', profile.phone);
+	baseHtml = baseHtml.replace('{{City}}', profile.city);
+	baseHtml = baseHtml.replace('{{DriverLicenseSection}}', buildDriverLicenseSection(profile.hasDriverLicense, language));
+	baseHtml = baseHtml.replace('{{Summary}}', buildSummary(profile.summary));
+	baseHtml = baseHtml.replace('{{Title}}', getContent(TITLE_KEY, language));
+	baseHtml = baseHtml.replace('{{ProfilePicture}}', parseProfilePicture());
+
+	// Experiences (always included)
 	baseHtml = baseHtml.replace(
 		'{{Experiences}}',
 		buildExperiences(parseExperiences(language), language)
 	);
 
-	baseHtml = baseHtml.replace('{{Languages}}', buildLanguages(parseLanguages(language)));
+	// Optional sections with empty check
+	if (options.includeHackathons) {
+		const hackathons = parseHackathons(language);
+		const hackathonContent = hackathons.length > 0 ? buildHackathons(hackathons, language) : '';
+		baseHtml = baseHtml.replace('{{HackathonsSection}}', buildSection('HACKATHONS', 'hackathon', hackathonContent, 'break-after-void'));
+	} else {
+		baseHtml = baseHtml.replace('{{HackathonsSection}}', '');
+	}
 
-	baseHtml = baseHtml.replace('{{Skills}}', buildSkills(parseSkills()));
+	if (options.includeOpenSource) {
+		const projects = parseOpenSourceProjects(language);
+		const projectContent = projects.length > 0 ? buildOpenSourceProjects(projects, language) : '';
+		baseHtml = baseHtml.replace('{{OpenSourceSection}}', buildSection('OPEN-SOURCE PROJECTS', 'project', projectContent, 'break-after-void'));
+	} else {
+		baseHtml = baseHtml.replace('{{OpenSourceSection}}', '');
+	}
 
-	baseHtml = baseHtml.replace('{{Educations}}', buildEducations(parseEducations(language)));
+	if (options.includeCertifications) {
+		const certifications = parseCertifications();
+		const certificationContent = certifications.length > 0 ? buildCertifications(certifications, language) : '';
+		baseHtml = baseHtml.replace('{{CertificationsSection}}', buildSection('CERTIFICATIONS', 'certification', certificationContent));
+	} else {
+		baseHtml = baseHtml.replace('{{CertificationsSection}}', '');
+	}
 
-	baseHtml = baseHtml.replace(
-		'{{Certifications}}',
-		buildCertifications(parseCertifications(), language)
-	);
+	if (options.includeSkills) {
+		const skills = parseSkills();
+		const skillContent = skills.length > 0 ? buildSkills(skills) : '';
+		baseHtml = baseHtml.replace('{{SkillsSection}}', buildSection('SKILLS', 'skill', skillContent));
+	} else {
+		baseHtml = baseHtml.replace('{{SkillsSection}}', '');
+	}
 
-	baseHtml = baseHtml.replace(
-		'{{Hackathons}}',
-		buildHackathons(parseHackathons(language), language)
-	);
+	if (options.includeEducation) {
+		const educations = parseEducations(language);
+		const educationContent = educations.length > 0 ? buildEducations(educations) : '';
+		baseHtml = baseHtml.replace('{{EducationsSection}}', buildSection('EDUCATION', 'education', educationContent));
+	} else {
+		baseHtml = baseHtml.replace('{{EducationsSection}}', '');
+	}
 
-	baseHtml = baseHtml.replace(
-		'{{OpenSourceProjects}}',
-		buildOpenSourceProjects(parseOpenSourceProjects(language), language)
-	);
-
-	baseHtml = baseHtml.replace('{{Title}}', getContent(TITLE_KEY, language));
-
-	baseHtml = baseHtml.replace('{{DrivingLicense}}', getContent(DRIVING_LICENSE_KEY, language));
-
-	baseHtml = baseHtml.replace('{{ProfilePicture}}', parseProfilePicture());
+	if (options.includeLanguages) {
+		const languages = parseLanguages(language);
+		const languageContent = languages.length > 0 ? buildLanguages(languages) : '';
+		baseHtml = baseHtml.replace('{{LanguagesSection}}', buildSection('LANGUAGES', 'language', languageContent));
+	} else {
+		baseHtml = baseHtml.replace('{{LanguagesSection}}', '');
+	}
 
 	return baseHtml;
 }

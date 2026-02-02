@@ -6,6 +6,7 @@ import {
 	Hackathon,
 	Language,
 	LanguageOptions,
+	Profile,
 	Project,
 } from '../model';
 import {
@@ -15,6 +16,7 @@ import {
 	HACKATHONS_DIR,
 	OPEN_SOURCE_DIR,
 	LANGUAGES_DIR,
+	PROFILE_DIR,
 	PROFILE_PICTURE_DIR,
 	SKILLS_DIR,
 } from './Constants';
@@ -85,6 +87,10 @@ export function parseOpenSourceProjects(language: LanguageOptions): Project[] {
 		p.date = new Date(p.date);
 		return p;
 	});
+}
+
+export function parseProfile(): Profile {
+	return parseContent<Profile>(PROFILE_DIR, null, false);
 }
 
 export function parseProfilePicture(): string {

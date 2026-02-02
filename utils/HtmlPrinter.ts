@@ -1,10 +1,10 @@
 import * as fs from 'fs';
 import * as pupeteer from 'puppeteer';
-import { LanguageOptions } from '../model';
+import { BuildOptions, LanguageOptions } from '../model';
 import { buildHtml } from './HtmlBuilder';
 
-export async function printHtml(language: LanguageOptions) {
-	const htmlContent: string = buildHtml(language);
+export async function printHtml(language: LanguageOptions, options: BuildOptions) {
+	const htmlContent: string = buildHtml(language, options);
 
 	const browser = await pupeteer.launch({
 		headless: 'new',

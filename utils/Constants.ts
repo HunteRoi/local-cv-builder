@@ -6,6 +6,7 @@ export const CERTIFICATIONS_DIR = './content/certifications';
 export const HACKATHONS_DIR = './content/hackathons';
 export const OPEN_SOURCE_DIR = './content/open-source';
 export const TRANSLATION_DIR = './content/translations';
+export const PROFILE_DIR = './content/profile';
 export const BASE_HTML_DIR = './content/base.html';
 export const PROFILE_PICTURE_DIR = './content';
 

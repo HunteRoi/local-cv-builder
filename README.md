@@ -1,6 +1,6 @@
 # CV Builder
 
-A TypeScript-based CV/Resume generator that creates professional PDF documents from JSON data files. Supports multiple languages and customizable templates.
+A TypeScript-based CV/Resume generator that creates professional PDF documents from JSON data files. Supports multiple languages, customizable templates, and flexible section inclusion.
 
 ## 🚀 Features
 
@@ -8,6 +8,8 @@ A TypeScript-based CV/Resume generator that creates professional PDF documents f
 - ✅ Generate professional PDF resumes
 - ✅ JSON-based content management
 - ✅ Customizable HTML template
+- ✅ CLI arguments to include/exclude sections
+- ✅ Automatic hiding of empty sections
 - ✅ Environment-based configuration
 - ✅ Automatic results folder creation
 
@@ -234,43 +236,128 @@ Create language-specific files: `en-US.json`, `fr-BE.json`
 - `title`: Your professional title
 - `won`: Text for prizes/awards
 
-### 9. Profile Picture
+### 9. Profile (`content/profile/content.json`)
+
+Not language-specific. Contains your personal information:
+
+```json
+{
+    "firstName": "John",
+    "lastName": "DOE",
+    "email": "john.doe@email.com",
+    "phone": "+1 (555) 123-4567",
+    "city": "New York",
+    "hasDriverLicense": true,
+    "picture": "profile_picture.jpg",
+    "summary": [
+        "First paragraph of your professional summary.",
+        "Second paragraph with more details about your experience.",
+        "Third paragraph about your skills and interests."
+    ]
+}
+```
+
+**Fields:**
+
+- `firstName` (string): Your first name
+- `lastName` (string): Your last name
+- `email` (string): Your email address
+- `phone` (string): Your phone number
+- `city` (string): Your city/location
+- `hasDriverLicense` (boolean): Whether to display driving license
+- `picture` (string): Filename of your profile picture (in `content/` folder)
+- `summary` (array): Array of paragraphs for your professional summary
+
+### 10. Profile Picture
 
 Place your profile picture at: `content/profile_picture.jpg`
 
 Recommended: Square image, 500x500px or larger
 
-### 10. HTML Template
+### 11. HTML Template
 
 Edit `content/base.html` to customize the CV layout and styling.
 
 **Available placeholders:**
 
+- `{{FullName}}` - Your full name (firstName + lastName)
+- `{{Email}}` - Your email address
+- `{{Phone}}` - Your phone number
+- `{{City}}` - Your city/location
+- `{{DriverLicenseSection}}` - Driving license section (shown if `hasDriverLicense` is true)
+- `{{Summary}}` - Your professional summary paragraphs
 - `{{ProfilePicture}}` - Base64 encoded profile image
-- `{{Title}}` - Professional title
-- `{{DrivingLicense}}` - Driving license text
+- `{{Title}}` - Professional title (from translations)
 - `{{Experiences}}` - Work experience section
-- `{{Languages}}` - Languages section
-- `{{Skills}}` - Skills section
-- `{{Educations}}` - Education section
-- `{{Certifications}}` - Certifications section
-- `{{Hackathons}}` - Hackathons section
-- `{{OpenSourceProjects}}` - Open source projects section
+- `{{HackathonsSection}}` - Hackathons section (hidden if empty or excluded)
+- `{{OpenSourceSection}}` - Open source projects section (hidden if empty or excluded)
+- `{{CertificationsSection}}` - Certifications section (hidden if empty or excluded)
+- `{{SkillsSection}}` - Skills section (hidden if empty or excluded)
+- `{{EducationsSection}}` - Education section (hidden if empty or excluded)
+- `{{LanguagesSection}}` - Languages section (hidden if empty or excluded)
 
 ## 🏃 Running the CV Builder
 
 Generate your CV PDFs:
 
 ```bash
-npm run build-cv
+npm run build-cv -- en-US
 ```
+
+### Command Line Options
+
+```bash
+npx ts-node builder.ts [languages...] [options...]
+```
+
+**Languages:**
+- `en-US`, `fr-FR`, etc. - Specify which language(s) to generate CVs for
+
+**Section Options:**
+
+| Option | Description |
+|--------|-------------|
+| `--hackathons` | Include hackathons section (default) |
+| `--no-hackathons` | Exclude hackathons section |
+| `--open-source` | Include open-source projects section (default) |
+| `--no-open-source` | Exclude open-source projects section |
+| `--certifications` | Include certifications section (default) |
+| `--no-certifications` | Exclude certifications section |
+| `--education` | Include education section (default) |
+| `--no-education` | Exclude education section |
+| `--skills` | Include skills section (default) |
+| `--no-skills` | Exclude skills section |
+| `--languages` | Include languages section (default) |
+| `--no-languages` | Exclude languages section |
+| `--help` | Show help message |
+
+**Examples:**
+
+```bash
+# Generate English CV with all sections
+npx ts-node builder.ts en-US
+
+# Generate multiple languages
+npx ts-node builder.ts en-US fr-FR
+
+# Exclude hackathons and open-source sections
+npx ts-node builder.ts en-US --no-hackathons --no-open-source
+
+# Generate minimal CV (experiences only)
+npx ts-node builder.ts en-US --no-hackathons --no-open-source --no-certifications --no-education --no-skills --no-languages
+```
+
+### Empty Section Handling
+
+Sections with no content are automatically hidden. For example, if your `certifications/content.json` is an empty array `[]`, the Certifications section won't appear in the output.
 
 This will:
 
 1. Read all content files
-2. Generate HTML for each language (en-US, fr-BE)
-3. Convert HTML to PDF using Puppeteer
-4. Save HTML and PDFs in the `results/` folder
+2. Apply section inclusion/exclusion options
+3. Generate HTML for each specified language
+4. Convert HTML to PDF using Puppeteer
+5. Save HTML and PDFs in the `results/` folder
 
 ### Output
 
@@ -310,15 +397,19 @@ builder/
 │   ├── hackathons/
 │   ├── open-source/
 │   ├── languages/
+│   ├── profile/         # Personal information (content.json)
 │   ├── skills/
 │   ├── translations/
 │   ├── base.html        # HTML template
 │   └── profile_picture.jpg
 ├── model/               # TypeScript interfaces
-├── utils/               # Helper functions (no LanguageProvider anymore)
+│   ├── BuildOptions.ts  # Section inclusion options
+│   ├── Profile.ts       # Profile data interface
+│   └── ...
+├── utils/               # Helper functions
 ├── results/             # Generated PDFs (auto-created)
 ├── .env                 # Environment configuration
-├── builder.ts           # Main entry point
+├── builder.ts           # Main entry point (CLI)
 └── package.json
 ```
 
@@ -341,6 +432,8 @@ The project uses `tsx` for TypeScript execution without pre-compilation.
 - **Optional Fields**: Set `tasks`, `price`, `description`, or `links` to `null` if not needed
 - **Sorting**: Experiences are automatically sorted by most recent first
 - **Profile Picture**: Use JPG format for best compatibility
+- **Empty Sections**: Sections with no data are automatically hidden
+- **CLI Flexibility**: Use `--no-*` flags to exclude specific sections from output
 
 ## 🐛 Troubleshooting
 
@@ -348,6 +441,7 @@ The project uses `tsx` for TypeScript execution without pre-compilation.
 
 - Make sure all required JSON files exist for your languages
 - Check that file names match exactly (case-sensitive)
+- Ensure `content/profile/content.json` exists with your profile data
 
 ### PDF or HTML not generating
 
